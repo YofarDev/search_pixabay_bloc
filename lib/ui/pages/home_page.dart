@@ -1,10 +1,8 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:search_pixabay_bloc/models/pixabay_image.dart';
-import 'package:search_pixabay_bloc/ui/pages/image_details_page.dart';
 
 import '../../bloc/search_images_bloc.dart';
+import '../widgets/list_images.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -88,7 +86,8 @@ class _HomePageState extends State<HomePage> {
                 if (images.isEmpty) {
                   return _noResults();
                 }
-                return _listImages(images);
+                return ListImages(
+                    images: images, scrollController: _scrollController);
 
               case SearchError():
                 return Center(
@@ -99,45 +98,8 @@ class _HomePageState extends State<HomePage> {
         ),
       );
 
-  Widget _listImages(List<PixabayImage> images) => ListView.builder(
-      controller: _scrollController,
-      itemCount: images.length,
-      shrinkWrap: true,
-      itemBuilder: (context, index) {
-        return Padding(
-          padding: EdgeInsets.only(bottom: 8.0, top: index == 0 ? 8 : 0),
-          child: _imageItem(images[index]),
-        );
-      });
-
   Widget _noResults() => const Center(
         child: Text('Aucun résultat'),
-      );
-
-  Widget _imageItem(PixabayImage image) => InkWell(
-        onTap: () {
-          Navigator.of(context).push(
-            MaterialPageRoute<dynamic>(
-              builder: (BuildContext context) => ImageDetailsPage(image: image),
-            ),
-          );
-        },
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(10),
-          child: SizedBox(
-            height: MediaQuery.of(context).size.height / 5,
-            child: Hero(
-              tag: image.largeImageUrl,
-              child: CachedNetworkImage(
-                imageUrl: image.largeImageUrl,
-                fit: BoxFit.cover,
-                placeholder: (context, url) =>
-                    const Center(child: CircularProgressIndicator()),
-                errorWidget: (context, url, error) => const Icon(Icons.error),
-              ),
-            ),
-          ),
-        ),
       );
 
   void _onSearchSubmitted(String value) {

@@ -21,6 +21,9 @@ class SearchImagesBloc extends Bloc<SearchImagesEvent, SearchImagesState> {
     on<FetchImagesFromQuery>((event, emit) async {
       emit(SearchLoading());
 
+      currentPage = 1;
+      hasReachedMax = false;
+      images.clear();
       query = event.query;
 
       if (query.isEmpty) {
@@ -33,7 +36,6 @@ class SearchImagesBloc extends Bloc<SearchImagesEvent, SearchImagesState> {
             page: currentPage);
         currentPage++;
         hasReachedMax = currentPage >= results.totalPages;
-        images.clear();
         images.addAll(results.images);
         emit(SearchLoaded(images));
       } catch (e) {

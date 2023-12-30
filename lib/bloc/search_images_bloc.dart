@@ -11,39 +11,26 @@ part 'search_images_state.dart';
 class SearchImagesBloc extends Bloc<SearchImagesEvent, SearchImagesState> {
   final SearchImagesService imageSearchService;
   final List<PixabayImage> images = [];
-  String query = '';
-  int currentPage = 1;
-  bool hasReachedMax = false;
+  late String query;
+  late int currentPage;
+  late bool hasReachedMax;
 
   SearchImagesBloc(
     this.imageSearchService,
   ) : super(SearchInitial()) {
     on<FetchImagesFromQuery>((event, emit) async {
-      emit(SearchLoading());
-
-      currentPage = 1;
-      hasReachedMax = false;
-      images.clear();
-      query = event.query;
+      final bool firstFetch = event.firstFetch;
+      if (firstFetch) {
+        emit(SearchLoading());
+        _initSearch();
+        query = event.query;
+      }
 
       if (query.isEmpty) {
         emit(SearchError("Veuillez saisir un mot clé"));
         return;
       }
 
-      try {
-        final results = await imageSearchService.fetchImagesFromQuery(query,
-            page: currentPage);
-        currentPage++;
-        hasReachedMax = currentPage >= results.totalPages;
-        images.addAll(results.images);
-        emit(SearchLoaded(images));
-      } catch (e) {
-        emit(SearchError(e.toString()));
-      }
-    });
-
-    on<FetchNextPage>((event, emit) async {
       if (hasReachedMax) {
         return;
       }
@@ -61,10 +48,14 @@ class SearchImagesBloc extends Bloc<SearchImagesEvent, SearchImagesState> {
     });
 
     on<ResetSearch>((event, emit) {
-      currentPage = 1;
-      hasReachedMax = false;
-      images.clear();
+      _initSearch();
       emit(SearchInitial());
     });
+  }
+
+  void _initSearch() {
+    currentPage = 1;
+    hasReachedMax = false;
+    images.clear();
   }
 }

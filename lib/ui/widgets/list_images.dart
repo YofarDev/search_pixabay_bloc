@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'package:search_pixabay_bloc/models/pixabay_image.dart';
 
 import 'image_item.dart';
@@ -27,5 +26,4 @@ class ListImages extends StatelessWidget {
           );
         });
   }
-
 }

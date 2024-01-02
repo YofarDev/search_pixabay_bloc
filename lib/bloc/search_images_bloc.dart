@@ -1,9 +1,8 @@
-
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'package:search_pixabay_bloc/models/pixabay_image.dart';
+import 'package:search_pixabay_bloc/res/app_strings.dart';
 
 import '../services/search_images_service.dart';
 
@@ -12,34 +11,25 @@ part 'search_images_state.dart';
 
 class SearchImagesBloc extends Bloc<SearchImagesEvent, SearchImagesState> {
   final SearchImagesService imageSearchService;
-  final List<PixabayImage> images = [];
   late String query;
   late int currentPage;
+  late int totalPages;
   late bool hasReachedMax;
 
   SearchImagesBloc(
     this.imageSearchService,
   ) : super(SearchInitial()) {
-
-
+    /**************************************************************************
+     *  FETCH IMAGES FROM QUERY
+     *************************************************************************/
     on<FetchImagesFromQuery>((event, emit) async {
-      // Check if we are fetching more from the same query
-      final bool fetchingMore = event.fetchingMore;
+      emit(SearchLoading());
+      _initSearch();
+      query = event.query;
 
-      if (!fetchingMore) {
-        emit(SearchLoading());
-        _initSearch();
-        query = event.query;
-      }
-      
       // Check if query is empty
       if (query.isEmpty) {
-        emit(SearchError("Veuillez saisir un mot clé"));
-        return;
-      }
-      
-      // Check if max page reached (only when fetching more)
-      if (hasReachedMax) {
+        emit(SearchError(emptySearchQueryError));
         return;
       }
 
@@ -47,16 +37,36 @@ class SearchImagesBloc extends Bloc<SearchImagesEvent, SearchImagesState> {
         // Fetch images from query and current page (default is 1)
         final results = await imageSearchService.fetchImagesFromQuery(query,
             page: currentPage);
-        currentPage++;
-        hasReachedMax = currentPage >= results.totalPages;
-        // Add results to the list (empty if fetching more = false)
-        images.addAll(results.images);
-        emit(SearchLoaded(images));
+        totalPages = results.totalPages;
+        hasReachedMax = currentPage >= totalPages;
+
+        emit(SearchLoaded(results.images));
       } catch (e) {
         emit(SearchError(e.toString()));
       }
     });
 
+    /**************************************************************************
+     *  FETCH MORE IMAGES FROM SAME QUERY
+     *************************************************************************/
+    on<FetchMoreFromSameQuery>((event, emit) async {
+      debugPrint(
+          "hasReachedMax: $hasReachedMax // currentPage: $currentPage // totalPages: $totalPages // query: $query");
+
+      if (hasReachedMax) return;
+      currentPage++;
+      hasReachedMax = currentPage >= totalPages;
+
+      final results = await imageSearchService.fetchImagesFromQuery(query,
+          page: currentPage);
+
+      // Append new results to old ones
+      emit(SearchLoaded([...state.props.first, ...results.images]));
+    });
+
+    /**************************************************************************
+     *  RESET SEARCH
+     *************************************************************************/
     on<ResetSearch>((event, emit) {
       _initSearch();
       emit(SearchInitial());
@@ -64,8 +74,8 @@ class SearchImagesBloc extends Bloc<SearchImagesEvent, SearchImagesState> {
   }
 
   void _initSearch() {
+    query = '';
     currentPage = 1;
     hasReachedMax = false;
-    images.clear();
   }
 }

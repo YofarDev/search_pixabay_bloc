@@ -7,10 +7,9 @@ sealed class SearchImagesEvent extends Equatable {
 
 final class FetchImagesFromQuery extends SearchImagesEvent {
   final String query;
-  final bool fetchingMore;
-  FetchImagesFromQuery({this.query = '', this.fetchingMore = false});
+  FetchImagesFromQuery({this.query = ''});
 }
 
-final class ResetSearch extends SearchImagesEvent {}
+final class FetchMoreFromSameQuery extends SearchImagesEvent {}
 
-//final class FetchNextPage extends SearchImagesEvent {}
+final class ResetSearch extends SearchImagesEvent {}

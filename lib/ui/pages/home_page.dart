@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../bloc/search_images_bloc.dart';
+import '../../res/app_strings.dart';
 import '../widgets/list_images.dart';
 
 class HomePage extends StatefulWidget {
@@ -25,9 +26,7 @@ class _HomePageState extends State<HomePage> {
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
-        context
-            .read<SearchImagesBloc>()
-            .add(FetchImagesFromQuery(fetchingMore: true));
+        context.read<SearchImagesBloc>().add(FetchMoreFromSameQuery());
       }
     });
   }
@@ -48,7 +47,7 @@ class _HomePageState extends State<HomePage> {
     return TextField(
         controller: _controller,
         decoration: InputDecoration(
-            hintText: 'Chercher sur Pixabay',
+            hintText: hintSearch,
             prefixIcon: const Icon(Icons.search),
             suffixIcon: _controller.text.isNotEmpty
                 ? IconButton(
@@ -101,7 +100,7 @@ class _HomePageState extends State<HomePage> {
       );
 
   Widget _noResults() => const Center(
-        child: Text('Aucun résultat'),
+        child: Text(noResults),
       );
 
   void _onSearchSubmitted(String value) {

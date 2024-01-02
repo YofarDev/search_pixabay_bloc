@@ -27,8 +27,9 @@ class ImageItem extends StatelessWidget {
         child: SizedBox(
           height: MediaQuery.of(context).size.height / 5,
           child: Hero(
-            tag: image.largeImageUrl,
+            tag: image.id,
             child: CachedNetworkImage(
+              // In the list we load a smaller format of the image
               imageUrl: image.webformatUrl,
               fit: BoxFit.cover,
               placeholder: (context, url) =>

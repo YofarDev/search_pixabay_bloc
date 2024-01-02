@@ -16,6 +16,7 @@ class SearchImagesService {
       Uri.parse(url),
     );
 
+    // To get the total pages number, we divide the total hits by the number of images per page (20)
     final int totalPages = (jsonDecode(response.body)['totalHits'] / 20).ceil();
 
     debugPrint("http request : $url // total pages : $totalPages");

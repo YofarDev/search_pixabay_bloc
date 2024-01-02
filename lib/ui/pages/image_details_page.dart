@@ -27,13 +27,17 @@ class ImageDetailsPage extends StatelessWidget {
   }
 
   Widget _imageItem(PixabayImage image) => Hero(
-        tag: image.largeImageUrl,
+        tag: image.id,
         child: CachedNetworkImage(
+          // Load the large image
           imageUrl: image.largeImageUrl,
           fit: BoxFit.cover,
           height: double.infinity,
           width: double.infinity,
           alignment: Alignment.center,
+          placeholder: (context, url) =>
+              const Center(child: CircularProgressIndicator()),
+          errorWidget: (context, url, error) => const Icon(Icons.error),
         ),
       );
 

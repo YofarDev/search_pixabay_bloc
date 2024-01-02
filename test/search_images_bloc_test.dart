@@ -5,23 +5,6 @@ import 'package:search_pixabay_bloc/services/search_images_service.dart';
 import 'package:test/test.dart';
 import 'package:bloc_test/bloc_test.dart';
 
-
-
-class MockSearchImagesService extends Mock implements SearchImagesService {
-  @override
-  Future<SearchResults> fetchImagesFromQuery(String query,
-      {int page = 1}) async {
-    return SearchResults(totalPages: 1, currentPage: page, images: [
-      PixabayImage.fromJson(const {
-        "id": 195893,
-        "pageURL": "https://pixabay.com/en/cute-cat-195893/",
-        "webformatURL": "https://pixabay.com/get/35bbf209e13e39d2_640.jpg",
-        "largeImageURL": "https://pixabay.com/get/ed6a99fd0a76647_1280.jpg",
-      })
-    ]);
-  }
-}
-
 void main() {
   group('SearchImagesBloc', () {
     late MockSearchImagesService mockSearchImagesService;
@@ -42,11 +25,26 @@ void main() {
     blocTest<SearchImagesBloc, SearchImagesState>(
       'emits [SearchLoading, SearchLoaded] when FetchImagesFromQuery is added',
       build: () => searchImagesBloc,
-      act: (bloc) =>
-          bloc.add(FetchImagesFromQuery(query: 'cats', fetchingMore: false)),
+      act: (bloc) => bloc.add(FetchImagesFromQuery(query: 'cats')),
       expect: () => [
         SearchLoading(),
-        SearchLoaded(const []),
+        SearchLoaded([mockedImage]),
+      ],
+    );
+
+    // TEST FOR FetchMoreFromSameQuery
+    blocTest<SearchImagesBloc, SearchImagesState>(
+      'emits [SearchLoaded] with additional images when FetchMoreFromSameQuery is added',
+      build: () => searchImagesBloc,
+      act: (bloc) => bloc
+        ..add(FetchImagesFromQuery(query: 'cats'))
+        ..add(FetchMoreFromSameQuery()),
+      expect: () => [
+        SearchLoading(),
+        // After initial fetch
+        SearchLoaded([mockedImage]),
+        // After fetch more
+        SearchLoaded([mockedImage, mockedImage2]),
       ],
     );
 
@@ -55,9 +53,36 @@ void main() {
       'emits [SearchInitial] when ResetSearch is added',
       build: () => searchImagesBloc,
       act: (bloc) => bloc.add(ResetSearch()),
-      expect: () => [
-        SearchInitial(),
-      ],
+      expect: () => [SearchInitial()],
     );
   });
 }
+
+// Mock API service & fake data
+class MockSearchImagesService extends Mock implements SearchImagesService {
+  @override
+  Future<SearchResults> fetchImagesFromQuery(String query,
+      {int page = 1}) async {
+    if (page == 1) {
+      return SearchResults(
+          totalPages: 2, currentPage: page, images: [mockedImage]);
+    } else {
+      return SearchResults(
+          totalPages: 2, currentPage: page, images: [mockedImage2]);
+    }
+  }
+}
+
+PixabayImage mockedImage = PixabayImage.fromJson(const {
+  "id": 11,
+  "pageURL": "https://pixabay.com/en/cute-cat-11/",
+  "webformatURL": "https://pixabay.com/get/35bbf209e13e39d2_640.jpg",
+  "largeImageURL": "https://pixabay.com/get/ed6a99fd0a76647_1280.jpg",
+});
+
+PixabayImage mockedImage2 = PixabayImage.fromJson(const {
+  "id": 22,
+  "pageURL": "https://pixabay.com/en/ugly-cat-22/",
+  "webformatURL": "https://pixabay.com/get/5bbf209e13e39d21_640.jpg",
+  "largeImageURL": "https://pixabay.com/get/d6a99fd0a766472_1280.jpg",
+});

@@ -1,4 +1,6 @@
-class PixabayImage {
+import 'package:equatable/equatable.dart';
+
+class PixabayImage extends Equatable {
   final String largeImageUrl;
   final String webformatUrl;
   final int views;
@@ -24,7 +26,7 @@ class PixabayImage {
   final String user;
   final String userImageURL;
 
-  PixabayImage({
+  const PixabayImage({
     required this.largeImageUrl,
     required this.webformatUrl,
     this.views = 0,
@@ -79,4 +81,46 @@ class PixabayImage {
       userImageURL: json['userImageURL'] ?? '',
     );
   }
+
+  @override
+  List<Object?> get props => [
+        largeImageUrl,
+        webformatUrl,
+        views,
+        downloads,
+        favorites,
+        likes,
+        comments,
+        id,
+        pageURL,
+        type,
+        tags,
+        previewURL,
+        previewWidth,
+        previewHeight,
+        webformatWidth,
+        webformatHeight,
+        fullHDURL,
+        imageURL,
+        imageWidth,
+        imageHeight,
+        imageSize,
+        userId,
+        user,
+        userImageURL,
+      ];
+}
+
+
+
+class SearchResults {
+  List<PixabayImage> images;
+  int totalPages;
+  int currentPage;
+
+  SearchResults({
+    required this.images,
+    required this.totalPages,
+    required this.currentPage,
+  });
 }

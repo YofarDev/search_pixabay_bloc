@@ -3,7 +3,9 @@ part of 'search_images_bloc.dart';
 
 
 @immutable
-sealed class SearchImagesState {
+sealed class SearchImagesState extends Equatable {
+  @override
+  List<Object> get props => [];
 }
 
 final class SearchInitial extends SearchImagesState {}

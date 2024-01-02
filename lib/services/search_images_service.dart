@@ -7,7 +7,7 @@ import '../models/pixabay_image.dart';
 import '../utils/constants.dart';
 
 class SearchImagesService {
-  Future<SearchedResults> fetchImagesFromQuery(String query,
+  Future<SearchResults> fetchImagesFromQuery(String query,
       {required int page}) async {
     final String url =
         'https://pixabay.com/api/?key=${Constants.pixabayApiKey}&q=$query&page=$page';
@@ -20,7 +20,7 @@ class SearchImagesService {
 
     debugPrint("http request : $url // total pages : $totalPages");
 
-    return SearchedResults(
+    return SearchResults(
         images: _parseImages(response.body),
         totalPages: totalPages,
         currentPage: page);
@@ -28,20 +28,9 @@ class SearchImagesService {
 
   List<PixabayImage> _parseImages(String responseBody) {
     final Map<String, dynamic> parsed = jsonDecode(responseBody);
-    //print(parsed)
     final List<dynamic> hits = parsed['hits'];
     return hits.map((dynamic json) => PixabayImage.fromJson(json)).toList();
   }
 }
 
-class SearchedResults {
-  List<PixabayImage> images;
-  int totalPages;
-  int currentPage;
 
-  SearchedResults({
-    required this.images,
-    required this.totalPages,
-    required this.currentPage,
-  });
-}

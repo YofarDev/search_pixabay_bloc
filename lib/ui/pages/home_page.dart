@@ -25,9 +25,9 @@ class _HomePageState extends State<HomePage> {
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
-        context.read<SearchImagesBloc>().add(FetchImagesFromQuery(
-        
-            firstFetch: false));
+        context
+            .read<SearchImagesBloc>()
+            .add(FetchImagesFromQuery(fetchingMore: true));
       }
     });
   }
@@ -105,6 +105,6 @@ class _HomePageState extends State<HomePage> {
       );
 
   void _onSearchSubmitted(String value) {
-    context.read<SearchImagesBloc>().add(FetchImagesFromQuery(query : value));
+    context.read<SearchImagesBloc>().add(FetchImagesFromQuery(query: value));
   }
 }

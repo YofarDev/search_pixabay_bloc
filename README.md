@@ -1,6 +1,6 @@
 # Search Pixabay Bloc [Mobile & Web]
 
-Try web version here. [https://search-pixabay-bloc.web.app/](https://search-pixabay-bloc.web.app/)
+[Try web version](https://search-pixabay-bloc.web.app/)
 
 Demo Flutter project with [Bloc](https://bloclibrary.dev/#/) architecture.
 

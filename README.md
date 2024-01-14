@@ -1,16 +1,9 @@
-# search_pixabay_bloc
+# Search Pixabay Bloc
 
-A new Flutter project.
+Demo Flutter project with [Bloc](https://bloclibrary.dev/#/) architecture.
 
-## Getting Started
+Search on Pixabay using its API and return the results as a list.
 
-This project is a starting point for a Flutter application.
+With pagination when scrolling.
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+![1705224000780](image/README/1705224000780.png) ![1705224054163](image/README/1705224054163.png)

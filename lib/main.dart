@@ -1,11 +1,17 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:search_pixabay_bloc/bloc/search_images_bloc.dart';
 import 'package:search_pixabay_bloc/services/search_images_service.dart';
 
+import 'firebase_options.dart';
 import 'ui/pages/home_page.dart';
 
-void main() {
+void main() async {
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   runApp(const MyApp());
 }
 

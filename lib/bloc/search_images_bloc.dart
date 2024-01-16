@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:search_pixabay_bloc/models/pixabay_image.dart';
 import 'package:search_pixabay_bloc/res/app_strings.dart';
 
+import '../services/analytics_service.dart';
 import '../services/search_images_service.dart';
 
 part 'search_images_event.dart';
@@ -32,6 +33,9 @@ class SearchImagesBloc extends Bloc<SearchImagesEvent, SearchImagesState> {
         emit(SearchError(emptySearchQueryError));
         return;
       }
+  
+      // Log search query
+      AnalyticsService.logSearch(query);
 
       try {
         // Fetch images from query and current page (default is 1)
